@@ -1,4 +1,7 @@
 package com.instagram.instagram.repositories;
 
-public class UserRepository {
+import com.instagram.instagram.model.User;
+import org.springframework.data.repository.CrudRepository;
+
+public interface UserRepository extends CrudRepository<User, Integer> {
 }

@@ -1,4 +1,7 @@
 package com.instagram.instagram.repositories;
 
-public class SessionRepository {
+import com.instagram.instagram.model.Session;
+import org.springframework.data.repository.CrudRepository;
+
+public interface SessionRepository extends CrudRepository<Session, Integer> {
 }
