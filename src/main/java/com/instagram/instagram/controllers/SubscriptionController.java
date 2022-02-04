@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +61,42 @@ public class SubscriptionController {
         Subscription subscription = new Subscription(followeeId, followerId);
         subscriptionRepository.save(subscription);
         return "Subscribed";
+    }
+
+    @GetMapping
+    @ResponseBody
+    public Iterable<Subscription> getSubscriptions(@CookieValue(value = "sessionToken") String sessionToken) {
+        Iterable<Session> sessions = sessionRepository.findAll();
+        Optional<Session> sessionOptional = Optional.empty();
+
+        for (Session x : sessions) {
+            if (x.getToken().equals(sessionToken)) {
+                sessionOptional = Optional.of(x);
+                break;
+            }
+        }
+
+        if (sessionOptional.isEmpty()) {
+            throw HttpClientErrorException.create(
+                    HttpStatus.FORBIDDEN,
+                    "Unauthorized",
+                    HttpHeaders.EMPTY,
+                    null,
+                    null);
+        }
+
+        Integer followerId = sessionOptional.get().getUserId();
+
+        Iterable<Subscription> allSubscriptions = subscriptionRepository.findAll();
+        List<Subscription> userSubscriptions = new ArrayList<Subscription>();
+
+        for (Subscription x : allSubscriptions) {
+            if(x.getFollowerId().equals(followerId)) {
+                userSubscriptions.add(x);
+            }
+        }
+
+        return userSubscriptions;
     }
 
 }

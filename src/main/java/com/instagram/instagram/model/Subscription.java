@@ -13,6 +13,8 @@ public class Subscription {
     private Integer followeeId;
     private Integer followerId;
 
+    public Subscription() {}
+
     public Subscription(Integer followeeId, Integer followerId) {
         this.followeeId = followeeId;
         this.followerId = followerId;

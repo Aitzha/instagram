@@ -14,6 +14,13 @@ public class Post {
     private Integer userId;
     private String imagePath;
 
+    public Post() {}
+
+    public Post(String imagePath, Integer userId) {
+        this.imagePath = imagePath;
+        this.userId = userId;
+    }
+
     public Integer getId() {
         return this.id;
     }

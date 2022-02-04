@@ -7,8 +7,11 @@ import com.instagram.instagram.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
@@ -59,27 +62,38 @@ public class UserController {
                                  @CookieValue(value = "sessionToken") String sessionToken) throws IOException {
 
         Iterable<Session> sessions = sessionRepository.findAll();
-        Session session = new Session();
-        boolean sessionFound = false;
+        Optional<Session> sessionOptional = Optional.empty();
 
-        for(Session x : sessions) {
-            if(x.getToken().equals(sessionToken)) {
-                sessionFound = true;
-                session = x;
+        for (Session x : sessions) {
+            if (x.getToken().equals(sessionToken)) {
+                sessionOptional = Optional.of(x);
                 break;
             }
         }
 
-        if(sessionFound) {
-            Optional<User> user = userRepository.findById(session.getUserId());
-            if(user.isPresent()) {
-                return EntityModel.of(user.get(),
-                                      linkTo(methodOn(UserController.class).get(id, sessionToken)).withSelfRel(),
-                                      linkTo(methodOn(UserController.class).getAll()).withRel("/"));
-            }
+        if (sessionOptional.isEmpty()) {
+            throw HttpClientErrorException.create(
+                    HttpStatus.FORBIDDEN,
+                    "Unauthorized",
+                    HttpHeaders.EMPTY,
+                    null,
+                    null);
         }
 
-        return EntityModel.of(new User());
+        Optional<User> userOptional = userRepository.findById(sessionOptional.get().getUserId());
+
+        if (userOptional.isEmpty()) {
+            throw HttpClientErrorException.create(
+                    HttpStatus.FORBIDDEN,
+                    "User not found",
+                    HttpHeaders.EMPTY,
+                    null,
+                    null);
+        }
+
+        return EntityModel.of(userOptional.get(),
+                linkTo(methodOn(UserController.class).get(id, sessionToken)).withSelfRel(),
+                linkTo(methodOn(UserController.class).getAll()).withRel("/"));
     }
 
     @DeleteMapping

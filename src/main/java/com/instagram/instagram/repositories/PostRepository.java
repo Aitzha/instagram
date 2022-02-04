@@ -1,4 +1,7 @@
 package com.instagram.instagram.repositories;
 
-public class PostRepository {
+import com.instagram.instagram.model.Post;
+import org.springframework.data.repository.CrudRepository;
+
+public interface PostRepository extends CrudRepository<Post, Integer> {
 }
