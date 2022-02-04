@@ -1,4 +1,7 @@
 package com.instagram.instagram.repositories;
 
-public class SubscriptionRepository {
+import com.instagram.instagram.model.Subscription;
+import org.springframework.data.repository.CrudRepository;
+
+public interface SubscriptionRepository extends CrudRepository<Subscription, Integer> {
 }

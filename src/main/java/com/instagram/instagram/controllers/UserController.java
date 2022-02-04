@@ -5,13 +5,17 @@ import com.instagram.instagram.model.User;
 import com.instagram.instagram.repositories.SessionRepository;
 import com.instagram.instagram.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -24,7 +28,7 @@ public class UserController {
     @Autowired
     private SessionRepository sessionRepository;
 
-    @PostMapping("/newAccount")
+    @PostMapping
     @ResponseBody
     public RedirectView post(@RequestParam(value = "username") String username,
                              @RequestParam(value = "password") String password,
@@ -37,8 +41,16 @@ public class UserController {
         return new RedirectView("/");
     }
 
+//    @GetMapping
+//    public CollectionModel<EntityModel<User>> getAll() {
+//        List<EntityModel<User>> users = userRepository.findAll().stream().map(employee -> EntityModel.of(employee)).collect(Collectors.toList());
+//
+//        return CollectionModel.of(users);
+//    }
+
+    @CrossOrigin(origins = "*")
     @GetMapping
-    public @ResponseBody Iterable<User> getAll() {
+    public Iterable<User> getAll() {
         return userRepository.findAll();
     }
 
