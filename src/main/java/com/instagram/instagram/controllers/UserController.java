@@ -33,15 +33,13 @@ public class UserController {
 
     @PostMapping
     @ResponseBody
-    public RedirectView post(@RequestParam(value = "username") String username,
-                             @RequestParam(value = "password") String password,
-                             Model model) throws IOException {
+    public String post(@RequestParam(value = "username") String username,
+                             @RequestParam(value = "password") String password) throws IOException {
 
         User user = new User(username, password);
         userRepository.save(user);
 
-        model.addAttribute("message", "Account was created. Try to login");
-        return new RedirectView("/");
+        return "Account was created. Try to login";
     }
 
 //    @GetMapping

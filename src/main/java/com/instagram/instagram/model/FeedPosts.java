@@ -13,6 +13,13 @@ public class FeedPosts {
     private Integer feedId;
     private Integer postId;
 
+    public FeedPosts() {}
+
+    public FeedPosts(Integer feedId, Integer postId) {
+        this.feedId = feedId;
+        this.postId = postId;
+    }
+
     public Integer getId() {
         return this.id;
     }

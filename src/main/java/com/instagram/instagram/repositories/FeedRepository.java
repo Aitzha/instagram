@@ -1,4 +1,7 @@
 package com.instagram.instagram.repositories;
 
-public class FeedRepository {
+import com.instagram.instagram.model.Feed;
+import org.springframework.data.repository.CrudRepository;
+
+public interface FeedRepository extends CrudRepository<Feed, Integer> {
 }

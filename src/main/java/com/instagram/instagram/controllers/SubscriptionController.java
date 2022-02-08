@@ -64,7 +64,6 @@ public class SubscriptionController {
     }
 
     @GetMapping
-    @ResponseBody
     public Iterable<Subscription> getSubscriptions(@CookieValue(value = "sessionToken") String sessionToken) {
         Iterable<Session> sessions = sessionRepository.findAll();
         Optional<Session> sessionOptional = Optional.empty();
@@ -98,5 +97,20 @@ public class SubscriptionController {
 
         return userSubscriptions;
     }
+
+    public Iterable<Subscription> getSubscriptionsById(Integer followerId) {
+        Iterable<Subscription> allSubscriptions = subscriptionRepository.findAll();
+        List<Subscription> userSubscriptions = new ArrayList<Subscription>();
+
+        for (Subscription x : allSubscriptions) {
+            if(x.getFollowerId().equals(followerId)) {
+                userSubscriptions.add(x);
+            }
+        }
+
+        return userSubscriptions;
+    }
+
+
 
 }

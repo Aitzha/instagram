@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -63,6 +65,19 @@ public class PostController {
     @GetMapping
     public Iterable<Post> getPosts() {
         return postRepository.findAll();
+    }
+
+    public Iterable<Post> getUserPosts(Integer id) {
+        Iterable<Post> posts = postRepository.findAll();
+        List<Post> userPosts = new ArrayList<Post>();
+
+        for(Post x : posts) {
+            if(x.getUserId().equals(id)) {
+                userPosts.add(x);
+            }
+        }
+
+        return userPosts;
     }
 
 }
