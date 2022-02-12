@@ -1,5 +1,6 @@
 package com.instagram.instagram.controllers;
 
+import com.instagram.instagram.common.SessionUtil;
 import com.instagram.instagram.model.Session;
 import com.instagram.instagram.model.Subscription;
 import com.instagram.instagram.model.User;
@@ -30,43 +31,16 @@ public class SubscriptionController {
     @Autowired
     private SessionRepository sessionRepository;
     @Autowired
-    private UserController userController;
+    private SessionUtil sessionUtil;
 
 
     @PostMapping
     public String subscribeToUser(@RequestParam(value = "followeeId") Integer followeeId,
                                   @CookieValue(value = "sessionToken") Optional<String> sessionToken) {
-        if(sessionToken.isEmpty()) {
-            throw HttpClientErrorException.create(
-                    HttpStatus.FORBIDDEN,
-                    "Unauthorized",
-                    HttpHeaders.EMPTY,
-                    null,
-                    null);
-        }
-
         Optional<Session> sessionOptional = Optional.empty();
-        sessionOptional = sessionRepository.findByToken(sessionToken.get());
-
-//        Iterable<Session> sessions = sessionRepository.findAll();
-//        for (Session x : sessions) {
-//            if (x.getToken().equals(sessionToken)) {
-//                sessionOptional = Optional.of(x);
-//                break;
-//            }
-//        }
-
-        if (sessionOptional.isEmpty()) {
-            throw HttpClientErrorException.create(
-                    HttpStatus.FORBIDDEN,
-                    "Session not found. Try to login",
-                    HttpHeaders.EMPTY,
-                    null,
-                    null);
-        }
+        sessionOptional = sessionUtil.findSession(sessionToken);
 
         Integer followerId = sessionOptional.get().getUserId();
-
 
         Subscription subscription = new Subscription(followeeId, followerId);
         subscriptionRepository.save(subscription);
@@ -75,45 +49,12 @@ public class SubscriptionController {
 
     @GetMapping
     public Iterable<Subscription> getSubscriptions(@CookieValue(value = "sessionToken") Optional<String> sessionToken) {
-        if(sessionToken.isEmpty()) {
-            throw HttpClientErrorException.create(
-                    HttpStatus.FORBIDDEN,
-                    "Unauthorized",
-                    HttpHeaders.EMPTY,
-                    null,
-                    null);
-        }
-
         Optional<Session> sessionOptional = Optional.empty();
-        sessionOptional = sessionRepository.findByToken(sessionToken.get());
-
-//        Iterable<Session> sessions = sessionRepository.findAll();
-//        for (Session x : sessions) {
-//            if (x.getToken().equals(sessionToken)) {
-//                sessionOptional = Optional.of(x);
-//                break;
-//            }
-//        }
-
-        if (sessionOptional.isEmpty()) {
-            throw HttpClientErrorException.create(
-                    HttpStatus.FORBIDDEN,
-                    "Session not found. Try to login",
-                    HttpHeaders.EMPTY,
-                    null,
-                    null);
-        }
+        sessionOptional = sessionUtil.findSession(sessionToken);
 
         Integer followerId = sessionOptional.get().getUserId();
 
         List<Subscription> userSubscriptions = subscriptionRepository.findByFollowerId(followerId);
-
-//        Iterable<Subscription> allSubscriptions = subscriptionRepository.findAll();
-//        for (Subscription x : allSubscriptions) {
-//            if(x.getFollowerId().equals(followerId)) {
-//                userSubscriptions.add(x);
-//            }
-//        }
 
         return userSubscriptions;
     }

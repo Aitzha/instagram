@@ -73,28 +73,5 @@ public class SessionController {
         return "Deleted";
     }
 
-    public Optional<Session> findSession(Optional<String> sessionToken) {
-        if(sessionToken.isEmpty()) {
-            throw HttpClientErrorException.create(
-                    HttpStatus.FORBIDDEN,
-                    "Unauthorized",
-                    HttpHeaders.EMPTY,
-                    null,
-                    null);
-        }
 
-        Optional<Session> sessionOptional = Optional.empty();
-        sessionOptional = sessionRepository.findByToken(sessionToken.get());
-
-        if (sessionOptional.isEmpty()) {
-            throw HttpClientErrorException.create(
-                    HttpStatus.FORBIDDEN,
-                    "Session not found. Try to login",
-                    HttpHeaders.EMPTY,
-                    null,
-                    null);
-        }
-
-        return sessionOptional;
-    }
 }

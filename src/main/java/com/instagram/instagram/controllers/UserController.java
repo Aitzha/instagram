@@ -1,5 +1,6 @@
 package com.instagram.instagram.controllers;
 
+import com.instagram.instagram.common.SessionUtil;
 import com.instagram.instagram.model.Session;
 import com.instagram.instagram.model.User;
 import com.instagram.instagram.repositories.SessionRepository;
@@ -29,7 +30,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private SessionRepository sessionRepository;
+    private SessionUtil sessionUtil;
 
     @PostMapping
     @ResponseBody
@@ -59,34 +60,8 @@ public class UserController {
     public EntityModel<User> get(@PathVariable Integer id,
                                  @CookieValue(value = "sessionToken") Optional<String> sessionToken) throws IOException {
 
-        if(sessionToken.isEmpty()) {
-            throw HttpClientErrorException.create(
-                    HttpStatus.FORBIDDEN,
-                    "Unauthorized",
-                    HttpHeaders.EMPTY,
-                    null,
-                    null);
-        }
-
         Optional<Session> sessionOptional = Optional.empty();
-        sessionOptional = sessionRepository.findByToken(sessionToken.get());
-
-//        Iterable<Session> sessions = sessionRepository.findAll();
-//        for (Session x : sessions) {
-//            if (x.getToken().equals(sessionToken)) {
-//                sessionOptional = Optional.of(x);
-//                break;
-//            }
-//        }
-
-        if (sessionOptional.isEmpty()) {
-            throw HttpClientErrorException.create(
-                    HttpStatus.FORBIDDEN,
-                    "Session not found. Try to login",
-                    HttpHeaders.EMPTY,
-                    null,
-                    null);
-        }
+        sessionOptional = sessionUtil.findSession(sessionToken);
 
         Optional<User> userOptional = userRepository.findById(sessionOptional.get().getUserId());
 

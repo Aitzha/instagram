@@ -1,5 +1,6 @@
 package com.instagram.instagram.controllers;
 
+import com.instagram.instagram.common.SessionUtil;
 import com.instagram.instagram.model.Post;
 import com.instagram.instagram.model.Session;
 import com.instagram.instagram.repositories.PostRepository;
@@ -28,39 +29,14 @@ public class PostController {
     private UserRepository userRepository;
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private SessionUtil sessionUtil;
 
     @PostMapping
     public String uploadImage(@RequestParam(value = "image") MultipartFile image,
                               @CookieValue(value = "sessionToken") Optional<String> sessionToken) {
-
-        if(sessionToken.isEmpty()) {
-            throw HttpClientErrorException.create(
-                    HttpStatus.FORBIDDEN,
-                    "Unauthorized",
-                    HttpHeaders.EMPTY,
-                    null,
-                    null);
-        }
-
         Optional<Session> sessionOptional = Optional.empty();
-        sessionOptional = sessionRepository.findByToken(sessionToken.get());
-
-//        Iterable<Session> sessions = sessionRepository.findAll();
-//        for (Session x : sessions) {
-//            if (x.getToken().equals(sessionToken)) {
-//                sessionOptional = Optional.of(x);
-//                break;
-//            }
-//        }
-
-        if (sessionOptional.isEmpty()) {
-            throw HttpClientErrorException.create(
-                    HttpStatus.FORBIDDEN,
-                    "Session not found. Try to login",
-                    HttpHeaders.EMPTY,
-                    null,
-                    null);
-        }
+        sessionOptional = sessionUtil.findSession(sessionToken);
 
         storageService.store(image);
 
