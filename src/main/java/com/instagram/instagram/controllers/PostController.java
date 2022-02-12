@@ -31,21 +31,32 @@ public class PostController {
 
     @PostMapping
     public String uploadImage(@RequestParam(value = "image") MultipartFile image,
-                              @CookieValue(value = "sessionToken") String sessionToken) {
-        Iterable<Session> sessions = sessionRepository.findAll();
-        Optional<Session> sessionOptional = Optional.empty();
+                              @CookieValue(value = "sessionToken") Optional<String> sessionToken) {
 
-        for (Session x : sessions) {
-            if (x.getToken().equals(sessionToken)) {
-                sessionOptional = Optional.of(x);
-                break;
-            }
+        if(sessionToken.isEmpty()) {
+            throw HttpClientErrorException.create(
+                    HttpStatus.FORBIDDEN,
+                    "Unauthorized",
+                    HttpHeaders.EMPTY,
+                    null,
+                    null);
         }
+
+        Optional<Session> sessionOptional = Optional.empty();
+        sessionOptional = sessionRepository.findByToken(sessionToken.get());
+
+//        Iterable<Session> sessions = sessionRepository.findAll();
+//        for (Session x : sessions) {
+//            if (x.getToken().equals(sessionToken)) {
+//                sessionOptional = Optional.of(x);
+//                break;
+//            }
+//        }
 
         if (sessionOptional.isEmpty()) {
             throw HttpClientErrorException.create(
                     HttpStatus.FORBIDDEN,
-                    "Unauthorized",
+                    "Session not found. Try to login",
                     HttpHeaders.EMPTY,
                     null,
                     null);
@@ -67,17 +78,18 @@ public class PostController {
         return postRepository.findAll();
     }
 
-    public Iterable<Post> getUserPosts(Integer id) {
-        Iterable<Post> posts = postRepository.findAll();
-        List<Post> userPosts = new ArrayList<Post>();
-
-        for(Post x : posts) {
-            if(x.getUserId().equals(id)) {
-                userPosts.add(x);
-            }
-        }
-
-        return userPosts;
-    }
+//    public Iterable<Post> getUserPosts(Integer id) {
+//
+//        List<Post> userPosts = postRepository.findByUserId(id);
+//
+////        Iterable<Post> posts = postRepository.findAll();
+////        for(Post x : posts) {
+////            if(x.getUserId().equals(id)) {
+////                userPosts.add(x);
+////            }
+////        }
+//
+//        return userPosts;
+//    }
 
 }

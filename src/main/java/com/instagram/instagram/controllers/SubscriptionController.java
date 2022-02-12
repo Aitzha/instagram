@@ -35,21 +35,31 @@ public class SubscriptionController {
 
     @PostMapping
     public String subscribeToUser(@RequestParam(value = "followeeId") Integer followeeId,
-                                  @CookieValue(value = "sessionToken") String sessionToken) {
-        Iterable<Session> sessions = sessionRepository.findAll();
-        Optional<Session> sessionOptional = Optional.empty();
-
-        for (Session x : sessions) {
-            if (x.getToken().equals(sessionToken)) {
-                sessionOptional = Optional.of(x);
-                break;
-            }
+                                  @CookieValue(value = "sessionToken") Optional<String> sessionToken) {
+        if(sessionToken.isEmpty()) {
+            throw HttpClientErrorException.create(
+                    HttpStatus.FORBIDDEN,
+                    "Unauthorized",
+                    HttpHeaders.EMPTY,
+                    null,
+                    null);
         }
+
+        Optional<Session> sessionOptional = Optional.empty();
+        sessionOptional = sessionRepository.findByToken(sessionToken.get());
+
+//        Iterable<Session> sessions = sessionRepository.findAll();
+//        for (Session x : sessions) {
+//            if (x.getToken().equals(sessionToken)) {
+//                sessionOptional = Optional.of(x);
+//                break;
+//            }
+//        }
 
         if (sessionOptional.isEmpty()) {
             throw HttpClientErrorException.create(
                     HttpStatus.FORBIDDEN,
-                    "Unauthorized",
+                    "Session not found. Try to login",
                     HttpHeaders.EMPTY,
                     null,
                     null);
@@ -64,18 +74,8 @@ public class SubscriptionController {
     }
 
     @GetMapping
-    public Iterable<Subscription> getSubscriptions(@CookieValue(value = "sessionToken") String sessionToken) {
-        Iterable<Session> sessions = sessionRepository.findAll();
-        Optional<Session> sessionOptional = Optional.empty();
-
-        for (Session x : sessions) {
-            if (x.getToken().equals(sessionToken)) {
-                sessionOptional = Optional.of(x);
-                break;
-            }
-        }
-
-        if (sessionOptional.isEmpty()) {
+    public Iterable<Subscription> getSubscriptions(@CookieValue(value = "sessionToken") Optional<String> sessionToken) {
+        if(sessionToken.isEmpty()) {
             throw HttpClientErrorException.create(
                     HttpStatus.FORBIDDEN,
                     "Unauthorized",
@@ -84,33 +84,50 @@ public class SubscriptionController {
                     null);
         }
 
+        Optional<Session> sessionOptional = Optional.empty();
+        sessionOptional = sessionRepository.findByToken(sessionToken.get());
+
+//        Iterable<Session> sessions = sessionRepository.findAll();
+//        for (Session x : sessions) {
+//            if (x.getToken().equals(sessionToken)) {
+//                sessionOptional = Optional.of(x);
+//                break;
+//            }
+//        }
+
+        if (sessionOptional.isEmpty()) {
+            throw HttpClientErrorException.create(
+                    HttpStatus.FORBIDDEN,
+                    "Session not found. Try to login",
+                    HttpHeaders.EMPTY,
+                    null,
+                    null);
+        }
+
         Integer followerId = sessionOptional.get().getUserId();
 
-        Iterable<Subscription> allSubscriptions = subscriptionRepository.findAll();
-        List<Subscription> userSubscriptions = new ArrayList<Subscription>();
+        List<Subscription> userSubscriptions = subscriptionRepository.findByFollowerId(followerId);
 
-        for (Subscription x : allSubscriptions) {
-            if(x.getFollowerId().equals(followerId)) {
-                userSubscriptions.add(x);
-            }
-        }
-
-        return userSubscriptions;
-    }
-
-    public Iterable<Subscription> getSubscriptionsById(Integer followerId) {
-        Iterable<Subscription> allSubscriptions = subscriptionRepository.findAll();
-        List<Subscription> userSubscriptions = new ArrayList<Subscription>();
-
-        for (Subscription x : allSubscriptions) {
-            if(x.getFollowerId().equals(followerId)) {
-                userSubscriptions.add(x);
-            }
-        }
+//        Iterable<Subscription> allSubscriptions = subscriptionRepository.findAll();
+//        for (Subscription x : allSubscriptions) {
+//            if(x.getFollowerId().equals(followerId)) {
+//                userSubscriptions.add(x);
+//            }
+//        }
 
         return userSubscriptions;
     }
 
-
-
+//    public Iterable<Subscription> getSubscriptionsById(Integer followerId) {
+//        Iterable<Subscription> allSubscriptions = subscriptionRepository.findAll();
+//        List<Subscription> userSubscriptions = new ArrayList<Subscription>();
+//
+//        for (Subscription x : allSubscriptions) {
+//            if(x.getFollowerId().equals(followerId)) {
+//                userSubscriptions.add(x);
+//            }
+//        }
+//
+//        return userSubscriptions;
+//    }
 }

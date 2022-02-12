@@ -1,16 +1,28 @@
 package com.instagram.instagram.model;
 
+import javax.persistence.*;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
+
 
 @Entity
+//@Table(name = "userUsernamePassword",
+//        indexes = {
+//                @Index(name = "username",  columnList = "username", unique = false),
+//                @Index(name = "password", columnList = "password",    unique = false),
+//                @Index(name = "id", columnList = "id", unique = true)})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+//    @Column(name = "id", nullable = false)
     private Integer id;
-    private String username;
+
+    private
+//    @Column(name = "username", nullable = true)
+    String username;
+//    @Column(name = "password", nullable = true)
     private String password;
 
     public User() {}

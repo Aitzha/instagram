@@ -57,22 +57,32 @@ public class UserController {
 
     @GetMapping("/{id:.+}")
     public EntityModel<User> get(@PathVariable Integer id,
-                                 @CookieValue(value = "sessionToken") String sessionToken) throws IOException {
+                                 @CookieValue(value = "sessionToken") Optional<String> sessionToken) throws IOException {
 
-        Iterable<Session> sessions = sessionRepository.findAll();
-        Optional<Session> sessionOptional = Optional.empty();
-
-        for (Session x : sessions) {
-            if (x.getToken().equals(sessionToken)) {
-                sessionOptional = Optional.of(x);
-                break;
-            }
+        if(sessionToken.isEmpty()) {
+            throw HttpClientErrorException.create(
+                    HttpStatus.FORBIDDEN,
+                    "Unauthorized",
+                    HttpHeaders.EMPTY,
+                    null,
+                    null);
         }
+
+        Optional<Session> sessionOptional = Optional.empty();
+        sessionOptional = sessionRepository.findByToken(sessionToken.get());
+
+//        Iterable<Session> sessions = sessionRepository.findAll();
+//        for (Session x : sessions) {
+//            if (x.getToken().equals(sessionToken)) {
+//                sessionOptional = Optional.of(x);
+//                break;
+//            }
+//        }
 
         if (sessionOptional.isEmpty()) {
             throw HttpClientErrorException.create(
                     HttpStatus.FORBIDDEN,
-                    "Unauthorized",
+                    "Session not found. Try to login",
                     HttpHeaders.EMPTY,
                     null,
                     null);

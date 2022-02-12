@@ -5,11 +5,16 @@ import com.instagram.instagram.model.User;
 import com.instagram.instagram.repositories.SessionRepository;
 import com.instagram.instagram.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/session")
@@ -23,9 +28,11 @@ public class SessionController {
     public RedirectView post(@RequestParam("username") String username,
                              @RequestParam("password") String password,
                              HttpServletResponse response) {
-        Iterable<User> users = userRepository.findAll();
 
-        for(User x : users) {
+
+        Iterable<User> usernames = userRepository.findByUsername(username);
+
+        for(User x : usernames) {
             if(x.getUsername().equals(username) && x.getPassword().equals(password)) {
                 Session session = new Session();
                 session.setUserId(x.getId());
@@ -36,6 +43,19 @@ public class SessionController {
                 return new RedirectView("/user/" + x.getId());
             }
         }
+
+//        Iterable<User> users = userRepository.findAll();
+//        for(User x : users) {
+//            if(x.getUsername().equals(username) && x.getPassword().equals(password)) {
+//                Session session = new Session();
+//                session.setUserId(x.getId());
+//                sessionRepository.save(session);
+//
+//                Cookie cookie = new Cookie("sessionToken", session.getToken());
+//                response.addCookie(cookie);
+//                return new RedirectView("/user/" + x.getId());
+//            }
+//        }
 
         return new RedirectView("/");
     }
@@ -51,5 +71,30 @@ public class SessionController {
     public String deleteAll() {
         sessionRepository.deleteAll();
         return "Deleted";
+    }
+
+    public Optional<Session> findSession(Optional<String> sessionToken) {
+        if(sessionToken.isEmpty()) {
+            throw HttpClientErrorException.create(
+                    HttpStatus.FORBIDDEN,
+                    "Unauthorized",
+                    HttpHeaders.EMPTY,
+                    null,
+                    null);
+        }
+
+        Optional<Session> sessionOptional = Optional.empty();
+        sessionOptional = sessionRepository.findByToken(sessionToken.get());
+
+        if (sessionOptional.isEmpty()) {
+            throw HttpClientErrorException.create(
+                    HttpStatus.FORBIDDEN,
+                    "Session not found. Try to login",
+                    HttpHeaders.EMPTY,
+                    null,
+                    null);
+        }
+
+        return sessionOptional;
     }
 }
