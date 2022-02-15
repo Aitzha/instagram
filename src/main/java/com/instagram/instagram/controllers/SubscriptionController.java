@@ -24,14 +24,15 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/subscription")
 public class SubscriptionController {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private SubscriptionRepository subscriptionRepository;
-    @Autowired
-    private SessionRepository sessionRepository;
-    @Autowired
     private SessionUtil sessionUtil;
+
+    @Autowired
+    SubscriptionController(SubscriptionRepository subscriptionRepository, SessionUtil sessionUtil) {
+        this.subscriptionRepository = subscriptionRepository;
+        this.sessionUtil = sessionUtil;
+    }
+
 
 
     @PostMapping
