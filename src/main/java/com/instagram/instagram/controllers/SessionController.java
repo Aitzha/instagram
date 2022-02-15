@@ -19,10 +19,13 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/session")
 public class SessionController {
-    @Autowired
     private SessionRepository sessionRepository;
     @Autowired
     private UserRepository userRepository;
+
+    SessionController(SessionRepository sessionRepository) {
+        this.sessionRepository = sessionRepository;
+    }
 
     @PostMapping
     public RedirectView post(@RequestParam("username") String username,
