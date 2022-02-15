@@ -22,15 +22,15 @@ import java.util.Optional;
 @RequestMapping("/post")
 public class PostController {
     @Autowired
-    private SessionRepository sessionRepository;
-    @Autowired
     private StorageService storageService;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private PostRepository postRepository;
     @Autowired
     private SessionUtil sessionUtil;
+
+    PostController(PostRepository postRepository) {
+        this.postRepository = postRepository;
+    }
+
 
     @PostMapping
     public String uploadImage(@RequestParam(value = "image") MultipartFile image,
