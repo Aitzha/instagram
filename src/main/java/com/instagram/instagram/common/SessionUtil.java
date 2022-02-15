@@ -12,8 +12,13 @@ import java.util.Optional;
 
 @Component
 public class SessionUtil {
-    @Autowired
     private SessionRepository sessionRepository;
+
+    @Autowired
+    public SessionUtil(SessionRepository sessionRepository) {
+        this.sessionRepository = sessionRepository;
+    }
+
     public Optional<Session> findSession(Optional<String> sessionToken) {
         if(sessionToken.isEmpty()) {
             throw HttpClientErrorException.create(

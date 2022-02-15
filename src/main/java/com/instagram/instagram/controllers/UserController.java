@@ -27,10 +27,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    @Autowired
     private UserRepository userRepository;
-    @Autowired
     private SessionUtil sessionUtil;
+
+    @Autowired
+    UserController(UserRepository userRepository, SessionUtil sessionUtil) {
+        this.userRepository = userRepository;
+        this.sessionUtil = sessionUtil;
+    }
 
     @PostMapping
     @ResponseBody
