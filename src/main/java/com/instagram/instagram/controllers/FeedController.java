@@ -14,14 +14,21 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/feed")
 public class FeedController {
-    @Autowired
     private FeedRepository feedRepository;
-    @Autowired
     private FeedPostsRepository feedPostsRepository;
-    @Autowired
     private SessionUtil sessionUtil;
-    @Autowired
     private FeedUtil feedUtil;
+
+    @Autowired
+    FeedController(SessionUtil sessionUtil,
+                   FeedUtil feedUtil,
+                   FeedRepository feedRepository,
+                   FeedPostsRepository feedPostsRepository) {
+        this.feedUtil = feedUtil;
+        this.sessionUtil = sessionUtil;
+        this.feedRepository = feedRepository;
+        this.feedPostsRepository = feedPostsRepository;
+    }
 
     @GetMapping
     public Iterable<FeedPosts> getFeed(@CookieValue(value = "sessionToken") Optional<String> sessionToken) {

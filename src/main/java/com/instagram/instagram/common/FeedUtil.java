@@ -14,12 +14,18 @@ import java.util.List;
 
 @Component
 public class FeedUtil {
-    @Autowired
     private FeedPostsRepository feedPostsRepository;
-    @Autowired
     private SubscriptionRepository subscriptionRepository;
-    @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    public FeedUtil(FeedPostsRepository feedPostsRepository,
+             SubscriptionRepository subscriptionRepository,
+             PostRepository postRepository) {
+        this.feedPostsRepository = feedPostsRepository;
+        this.postRepository = postRepository;
+        this.subscriptionRepository = subscriptionRepository;
+    }
 
     public void UpdateFeedByViewerId(Feed feed, Integer viewerId) {
         //firstly we delete all feedPosts of this feed

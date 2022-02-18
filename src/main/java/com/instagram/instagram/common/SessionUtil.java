@@ -19,6 +19,14 @@ public class SessionUtil {
         this.sessionRepository = sessionRepository;
     }
 
+    /**
+     * Finds session instance with given parameters.
+     *
+     * @param sessionToken is empty optional if user is not logged in,
+     *                     and is present otherwise
+     * @return corresponding session
+     * @throws HttpClientErrorException if session is not found
+     */
     public Optional<Session> findSession(Optional<String> sessionToken) {
         if(sessionToken.isEmpty()) {
             throw HttpClientErrorException.create(

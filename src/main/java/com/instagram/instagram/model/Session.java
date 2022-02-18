@@ -1,18 +1,20 @@
 package com.instagram.instagram.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
 import java.util.Random;
 
 @Entity
+//@Table(name = "session",
+//        indexes = {
+//                @Index(name = "token",  columnList = "token", unique = true)})
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+//    @Column(name = "id", nullable = false)
     Integer id;
+//    @Column(name = "token", nullable = false)
     String token;
     Integer userId;
 
