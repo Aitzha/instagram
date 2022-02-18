@@ -35,14 +35,14 @@ public class PostController {
     @PostMapping
     public String uploadImage(@RequestParam(value = "image") MultipartFile image,
                               @CookieValue(value = "sessionToken") Optional<String> sessionToken) {
-        Optional<Session> sessionOptional = Optional.empty();
-        sessionOptional = sessionUtil.findSession(sessionToken);
+        Session session;
+        session = sessionUtil.findSession(sessionToken);
 
         storageService.store(image);
 
         Post post = new Post(
                 storageService.load(image.getOriginalFilename()).toString(),
-                sessionOptional.get().getUserId());
+                session.getUserId());
 
         postRepository.save(post);
 

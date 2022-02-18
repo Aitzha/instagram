@@ -64,10 +64,10 @@ public class UserController {
     public EntityModel<User> get(@PathVariable Integer id,
                                  @CookieValue(value = "sessionToken") Optional<String> sessionToken) throws IOException {
 
-        Optional<Session> sessionOptional = Optional.empty();
-        sessionOptional = sessionUtil.findSession(sessionToken);
+        Session session;
+        session = sessionUtil.findSession(sessionToken);
 
-        Optional<User> userOptional = userRepository.findById(sessionOptional.get().getUserId());
+        Optional<User> userOptional = userRepository.findById(session.getUserId());
 
         if (userOptional.isEmpty()) {
             throw HttpClientErrorException.create(

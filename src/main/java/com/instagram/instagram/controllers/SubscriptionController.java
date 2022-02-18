@@ -38,10 +38,10 @@ public class SubscriptionController {
     @PostMapping
     public String subscribeToUser(@RequestParam(value = "followeeId") Integer followeeId,
                                   @CookieValue(value = "sessionToken") Optional<String> sessionToken) {
-        Optional<Session> sessionOptional = Optional.empty();
-        sessionOptional = sessionUtil.findSession(sessionToken);
+        Session session;
+        session = sessionUtil.findSession(sessionToken);
 
-        Integer followerId = sessionOptional.get().getUserId();
+        Integer followerId = session.getUserId();
 
         Subscription subscription = new Subscription(followeeId, followerId);
         subscriptionRepository.save(subscription);
@@ -50,10 +50,10 @@ public class SubscriptionController {
 
     @GetMapping
     public Iterable<Subscription> getSubscriptions(@CookieValue(value = "sessionToken") Optional<String> sessionToken) {
-        Optional<Session> sessionOptional = Optional.empty();
-        sessionOptional = sessionUtil.findSession(sessionToken);
+        Session session;
+        session = sessionUtil.findSession(sessionToken);
 
-        Integer followerId = sessionOptional.get().getUserId();
+        Integer followerId = session.getUserId();
 
         List<Subscription> userSubscriptions = subscriptionRepository.findByFollowerId(followerId);
 

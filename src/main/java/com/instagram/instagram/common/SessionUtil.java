@@ -24,10 +24,10 @@ public class SessionUtil {
      *
      * @param sessionToken is empty optional if user is not logged in,
      *                     and is present otherwise
-     * @return corresponding session
+     * @return returns session entity if session found otherwise throws exception
      * @throws HttpClientErrorException if session is not found
      */
-    public Optional<Session> findSession(Optional<String> sessionToken) {
+    public Session findSession(Optional<String> sessionToken) {
         if(sessionToken.isEmpty()) {
             throw HttpClientErrorException.create(
                     HttpStatus.FORBIDDEN,
@@ -49,6 +49,6 @@ public class SessionUtil {
                     null);
         }
 
-        return sessionOptional;
+        return sessionOptional.get();
     }
 }

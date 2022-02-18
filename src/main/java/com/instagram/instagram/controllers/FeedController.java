@@ -33,10 +33,10 @@ public class FeedController {
     @GetMapping
     public Iterable<FeedPosts> getFeed(@CookieValue(value = "sessionToken") Optional<String> sessionToken) {
 
-        Optional<Session> sessionOptional = Optional.empty();
-        sessionOptional = sessionUtil.findSession(sessionToken);
+        Session session;
+        session = sessionUtil.findSession(sessionToken);
 
-        Integer viewerId = sessionOptional.get().getUserId();
+        Integer viewerId = session.getUserId();
 
         //seeking feed or creating new feed
         Optional<Feed> feed = Optional.empty();
