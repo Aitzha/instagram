@@ -43,12 +43,15 @@ public class UserControllerTests {
         User user = new User("Gabit", "123");
         user.setId(5);
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        when(userRepository.save(any())).thenReturn(user);
+        doNothing().when(userRepository).deleteAll(any());
 
         List<Session> sessions = new ArrayList<>();
         when(sessionRepository.findAll()).thenReturn(sessions);
         Session session = new Session();
         session.setUserId(5);
         when(sessionRepository.findByToken(any())).thenReturn(Optional.of(session));
+
 
         sessionUtil = new SessionUtil(sessionRepository);
 
@@ -65,6 +68,27 @@ public class UserControllerTests {
 
         // then
         assertThat(actualUsers).isEqualTo(expectedUsers);
+    }
+
+    @Test
+    public void testDeleteAll_simple_success() {
+        userController.deleteAll();
+        verify(userRepository, times(1)).deleteAll();
+    }
+
+    @Test
+    public void testPost_simple_success() throws IOException{
+        // given
+        String username = "Gabit";
+        String password = "123";
+
+        User expectedUser = new User(username, password);
+
+        // when
+        User actualUser = userController.post(username, password);
+
+        // then
+        assertThat(expectedUser).isEqualTo(actualUser);
     }
 
     @Test
