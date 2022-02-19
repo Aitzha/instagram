@@ -33,10 +33,16 @@ public class SubscriptionController {
         this.sessionUtil = sessionUtil;
     }
 
-
-
+    /**
+     * Creates new subscription in database table with given params
+     *
+     * @param followeeId id of the user the current user wants to follow
+     * @param sessionToken is empty optional if user is not logged in,
+     *                     and is present otherwise
+     * @return returns created subscription
+     */
     @PostMapping
-    public String subscribeToUser(@RequestParam(value = "followeeId") Integer followeeId,
+    public Subscription subscribeToUser(@RequestParam(value = "followeeId") Integer followeeId,
                                   @CookieValue(value = "sessionToken") Optional<String> sessionToken) {
         Session session;
         session = sessionUtil.findSession(sessionToken);
@@ -45,9 +51,17 @@ public class SubscriptionController {
 
         Subscription subscription = new Subscription(followeeId, followerId);
         subscriptionRepository.save(subscription);
-        return "Subscribed";
+        return subscription;
     }
 
+    /**
+     * Finds all the subscriptions of this user
+     *
+     * @param sessionToken is empty optional if user is not logged in,
+     *                     and is present otherwise
+     *
+     * @return returns array list of user's subscriptions
+     */
     @GetMapping
     public Iterable<Subscription> getSubscriptions(@CookieValue(value = "sessionToken") Optional<String> sessionToken) {
         Session session;
@@ -59,17 +73,4 @@ public class SubscriptionController {
 
         return userSubscriptions;
     }
-
-//    public Iterable<Subscription> getSubscriptionsById(Integer followerId) {
-//        Iterable<Subscription> allSubscriptions = subscriptionRepository.findAll();
-//        List<Subscription> userSubscriptions = new ArrayList<Subscription>();
-//
-//        for (Subscription x : allSubscriptions) {
-//            if(x.getFollowerId().equals(followerId)) {
-//                userSubscriptions.add(x);
-//            }
-//        }
-//
-//        return userSubscriptions;
-//    }
 }
