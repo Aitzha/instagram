@@ -27,6 +27,16 @@ public class SessionController {
         this.sessionRepository = sessionRepository;
     }
 
+    /**
+     * Creates new session
+     *
+     * @param username name of the user
+     * @param password password of the user
+     * @param response sends cookies to the user
+     *
+     * @return redirects user to profile page when successfully logged in otherwise,
+     *         to the home page
+     */
     @PostMapping
     public RedirectView post(@RequestParam("username") String username,
                              @RequestParam("password") String password,
@@ -47,28 +57,25 @@ public class SessionController {
             }
         }
 
-//        Iterable<User> users = userRepository.findAll();
-//        for(User x : users) {
-//            if(x.getUsername().equals(username) && x.getPassword().equals(password)) {
-//                Session session = new Session();
-//                session.setUserId(x.getId());
-//                sessionRepository.save(session);
-//
-//                Cookie cookie = new Cookie("sessionToken", session.getToken());
-//                response.addCookie(cookie);
-//                return new RedirectView("/user/" + x.getId());
-//            }
-//        }
-
         return new RedirectView("/");
     }
 
+    /**
+     * Finds all sessions
+     *
+     * @return returns Iterable list of sessions
+     */
     @GetMapping("/all")
     @ResponseBody
     public Iterable<Session> getAll() {
         return sessionRepository.findAll();
     }
 
+    /**
+     * Deletes all sessions
+     *
+     * @return returns message of successful operation
+     */
     @DeleteMapping
     @ResponseBody
     public String deleteAll() {

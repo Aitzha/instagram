@@ -31,7 +31,14 @@ public class PostController {
         this.postRepository = postRepository;
     }
 
-
+    /**
+     * Creates a post for given image
+     *
+     * @param image that will be saved in bd
+     * @param sessionToken is empty optional if user is not logged in,
+     *                     and is present otherwise
+     * @return returns message of successful operation
+     */
     @PostMapping
     public String uploadImage(@RequestParam(value = "image") MultipartFile image,
                               @CookieValue(value = "sessionToken") Optional<String> sessionToken) {
@@ -49,23 +56,14 @@ public class PostController {
         return "You successfully uploaded";
     }
 
+    /**
+     * Finds all posts
+     *
+     * @return returns Iterable list of posts
+     */
     @GetMapping
     public Iterable<Post> getPosts() {
         return postRepository.findAll();
     }
-
-//    public Iterable<Post> getUserPosts(Integer id) {
-//
-//        List<Post> userPosts = postRepository.findByUserId(id);
-//
-////        Iterable<Post> posts = postRepository.findAll();
-////        for(Post x : posts) {
-////            if(x.getUserId().equals(id)) {
-////                userPosts.add(x);
-////            }
-////        }
-//
-//        return userPosts;
-//    }
 
 }

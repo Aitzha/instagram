@@ -30,6 +30,13 @@ public class FeedController {
         this.feedPostsRepository = feedPostsRepository;
     }
 
+    /**
+     * Update FeedPosts of this user's feed
+     *
+     * @param sessionToken is empty optional if user is not logged in,
+     *                     and is present otherwise
+     * @return returns updated FeedPosts list
+     */
     @GetMapping
     public Iterable<FeedPosts> getFeed(@CookieValue(value = "sessionToken") Optional<String> sessionToken) {
 
