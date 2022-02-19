@@ -36,6 +36,15 @@ public class UserController {
         this.sessionUtil = sessionUtil;
     }
 
+    /**
+     * Creates new user entity in databse table
+     *
+     * @param username is the name of the user
+     * @param password is the password of the user
+     *
+     * @return returns created user as a JSON
+     * @throws IOException
+     */
     @PostMapping
     @ResponseBody
     public User post(@RequestParam(value = "username") String username,
@@ -47,19 +56,28 @@ public class UserController {
         return user;
     }
 
-//    @GetMapping
-//    public CollectionModel<EntityModel<User>> getAll() {
-//        List<EntityModel<User>> users = userRepository.findAll().stream().map(employee -> EntityModel.of(employee)).collect(Collectors.toList());
-//
-//        return CollectionModel.of(users);
-//    }
 
+    /**
+     * Finds and returns all users in database table
+     *
+     * @return return Iterable array of users entities
+     */
     @CrossOrigin(origins = "*")
     @GetMapping
     public Iterable<User> getAll() {
         return userRepository.findAll();
     }
 
+
+    /**
+     * Finds user by given given params
+     *
+     * @param id id of the user, current user tries to find
+     * @param sessionToken is empty optional if user is not logged in,
+     *      *                     and is present otherwise
+     * @return returns EntityModel of user with links as JSON
+     * @throws IOException
+     */
     @GetMapping("/{id:.+}")
     public EntityModel<User> get(@PathVariable Integer id,
                                  @CookieValue(value = "sessionToken") Optional<String> sessionToken) throws IOException {
@@ -83,6 +101,10 @@ public class UserController {
                 linkTo(methodOn(UserController.class).getAll()).withRel("/"));
     }
 
+    /**
+     * Deletes all the users in database table
+     * @return returns message of successful operation
+     */
     @DeleteMapping
     public @ResponseBody
     String deleteAll() {

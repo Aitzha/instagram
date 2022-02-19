@@ -27,6 +27,12 @@ public class FeedUtil {
         this.subscriptionRepository = subscriptionRepository;
     }
 
+    /**
+     * Updated the Feed by given parameters
+     *
+     * @param feed entity of the feed that will be updated
+     * @param viewerId is used to find recommended post for user with same id
+     */
     public void UpdateFeedByViewerId(Feed feed, Integer viewerId) {
         //firstly we delete all feedPosts of this feed
         List<FeedPosts> feedPostsToDelete = feedPostsRepository.findByFeedId(feed.getId());
